@@ -1,0 +1,86 @@
+---
+title: LaTeX, Maths, and Code
+date: "2020-08-5"
+description: "View examples on how to use LaTeX code with mdx as well as how to format code blocks to work with syntax highlighting."
+---
+
+This blog supports code syntax highlighting through `prism-react-renderer` and the usage of $\LaTeX$ via `gatsby-remark-katex`
+
+However $\KaTeX$ (the library used to render) $\LaTeX$ will crash your development environment if it encounters a symbol it is unfamiliar with. Make sure you test your posts locally before publishing the site to a production server.
+
+To learn more about implementing $\LaTeX$ in markdown, check out the [documentation here](https://using-remark.gatsbyjs.org/katex/)
+
+# $\LaTeX$ Examples
+
+Consider the following list of k a's and l b's:
+
+$$
+\{\underbrace{%
+    \overbrace{a,\ldots, a}^{k\ a's},
+    \overbrace{b,\ldots, b}^{l\ b's}}
+  _{k+l\ \mathrm{elements}}        \}
+$$
+
+<div className="mt4" />
+
+Look further at this wild equation:
+
+$$
+\frac{\pm
+  \left|\begin{array}{ccc}
+  x_1-x_2   & y_1-y_2  \\
+  l_1       & m_1
+  \end{array}\right|}
+  {\sqrt{\left|\begin{array}{cc}l_1&m_1\\
+  l_2&m_2\end{array}\right|^2
+  +       \left|\begin{array}{cc}m_1&n_1\\
+  n_1&l_1\end{array}\right|^2}}
+$$
+
+<div className="mt5" />
+
+# Code Examples
+
+### Quotient and remainder of a pair of numbers in c++
+```cpp
+#include <iostream>
+using namespace std;
+
+int main()
+{
+  int divisor, dividend, quotient, remainder;
+
+  cout << "Enter dividend: ";
+  cin >> dividend;
+
+  cout << "Enter divisor: ";
+  cin >> divisor;
+
+  quotient = dividend / divisor;
+  remainder = dividend % divisor;
+
+  cout << "Quotient = " << quotient << endl;
+  cout << "Remainder = " << remainder;
+
+  return 0;
+}
+```
+
+### Sieve of Eratosthenes implemented in Python
+```python
+def countPrimes_sieve_of_eratosthenes(self, n: int) -> int:
+  if n < 2:
+      return 0
+
+  marked = set()
+  seive = [i for i in range(1, n)]
+  skip = 2
+  while skip * skip < n:
+      if skip not in marked:
+          marked.update(seive[2 * skip - 1 :: skip])
+      skip += 1
+
+  return len(seive) - len(marked) - 1
+```
+
+_Thanks to [kunalJa](https://github.com/kunalJa/gatsby-starter-math-blog) for the examples on this page_
