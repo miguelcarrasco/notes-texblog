@@ -1,16 +1,16 @@
 const months = [
-	"January",
-	"February",
-	"March",
+	"Enero",
+	"Febrero",
+	"Marzo",
 	"April",
-	"May",
-	"June",
-	"July",
-	"August",
-	"September",
-	"October",
-	"November",
-	"December",
+	"Mayo",
+	"Junio",
+	"Julio",
+	"Agosto",
+	"Septiembre",
+	"Octubre",
+	"Noviembre",
+	"Diciembre",
 ]
 
 export default function dateInEnglish(date) {

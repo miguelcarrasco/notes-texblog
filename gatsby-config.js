@@ -1,9 +1,9 @@
 module.exports = {
 	siteMetadata: {
 		// Update these and enjoy :)
-		title: `TeXBlog`,
-		description: `A simple, LaTeX enabled starter to properly showcase your beautifully typeset articles. Perfectly complements STEM blogs.`,
-		author: `Akshat Bisht`,
+		title: `Ideas Interesantes`,
+		description: `Un blog con una compilacón de notas en matemáticas, ciencias de la computación, programación y otros temas interesantes, usado principalmente para recordar y compartir ideas.`,
+		author: `Miguel Angel Carrasco`,
 	},
 	plugins: [
 		{
