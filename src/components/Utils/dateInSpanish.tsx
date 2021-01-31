@@ -13,10 +13,10 @@ const months = [
 	"Diciembre",
 ]
 
-export default function dateInEnglish(date) {
+export default function dateInSpanish(date) {
 	var dateArr = []
 	dateArr = date.split("-")
-	var dateInEnglish = `${parseInt(dateArr[2])} ${
+	var dateInEnglish = `${parseInt(dateArr[2])} de ${
 		months[parseInt(dateArr[1]) - 1]
 	}, ${dateArr[0]}`
 	return dateInEnglish

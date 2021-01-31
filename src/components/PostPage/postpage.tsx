@@ -6,7 +6,7 @@ import { Link } from "gatsby"
 import Layout from "../Layout/layout"
 import SEO from "../Utils/seo"
 import truncateText from "../Utils/truncateText"
-import dateInEnglish from "../Utils/dateInEnglish"
+import dateInSpanish from "../Utils/dateInSpanish"
 const shortcodes = { Link }
 
 import "./postpage.scss"
@@ -22,7 +22,7 @@ export default function PostPage({ data: { mdx } }) {
 			<article className="PostPage" id={mdx.id}>
 				<h1 className="PostPage__title">{mdx.frontmatter.title}</h1>
 				<h3 className="PostPage__date">
-					{dateInEnglish(mdx.frontmatter.date)}
+					{dateInSpanish(mdx.frontmatter.date)}
 				</h3>
 				<MDXProvider components={shortcodes} className="test">
 					<MDXRenderer>{mdx.body}</MDXRenderer>

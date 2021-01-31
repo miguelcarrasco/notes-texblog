@@ -1,7 +1,7 @@
 import React from "react"
 import { useStaticQuery, graphql } from "gatsby"
 import { Link } from "gatsby"
-import dateInEnglish from "../Utils/dateInEnglish"
+import dateInSpanish from "../Utils/dateInSpanish"
 import truncateText from "../Utils/truncateText"
 
 import "./posts.scss"
@@ -23,7 +23,7 @@ export default function Posts({ data }) {
 						<Link to={`/posts/${post.node.slug}`} className="Post__metainfo">
 							<h3 className="Post__title">{post.node.frontmatter.title}</h3>
 							<h5 className="Post__date">
-								{dateInEnglish(post.node.frontmatter.date)}
+								{dateInSpanish(post.node.frontmatter.date)}
 							</h5>
 						</Link>
 						<div className="Post__description">
