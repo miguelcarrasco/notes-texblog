@@ -22,13 +22,10 @@ const Header = props => (
 			</Link>
 			<SocialLinks className="Header__SocialLinks" />
 			<Link to="/about" className="Header__menu__item">
-				About
+				Acerca de
 			</Link>
 			<Link to="/all-posts" className="Header__menu__item">
 				Posts
-			</Link>
-			<Link to="/example-page" className="Header__menu__item">
-				Example Page
 			</Link>
 		</Menu>
 	</header>

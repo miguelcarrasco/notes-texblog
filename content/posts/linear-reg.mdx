@@ -5,7 +5,7 @@ description: "Derivación de las fórmulas de regresión lineal simple"
 ---
 La regresión lineal simple se suele enseñar en la academia en cursos de introducción a la estadística.
 Normalmente se presentan métodos para calcular los coeficientes de la regresión, pero pocas veces se presenta
-como se llegó a estas fórmulas.
+el origen de dichas fórmulas.
 
 En esta publicación se mostrará la derivación de estas fórmulas para el caso mas básico, usando la aproximación 
 por mínimos cuadrados ordinarios (abreviado OLS por las siglas en inglés *Ordinary Least Squares*). 
@@ -14,7 +14,7 @@ ciertas observaciones astronómicas, las órbitas de cuerpos celestes respecto a
 
 ## Definición del problema
 
-Dado un conjunto de $n$ pares de datos $(y_1,x_1),(y_2,x_2),(y_3,x_3),...,(y_n,x_n)$ que se presupone se ajustan a
+Dado un conjunto de $n$ pares de datos $(x_1,y_1),(x_2,y_2),(x_3,y_3),...,(x_n,y_n)$ que se presupone se ajustan a
 un modelo de regresión
 $$
 y =  E(y) + \epsilon
@@ -52,8 +52,9 @@ $$
 \bar{y} = \frac{\sum_{i=1}^{n}y_i}{n} 
 $$
 ## Derivación de las fórmulas
-Existen diferentes maneras de llegar a este resultado, en este caso usaremos el cálculo y en otra publicación se
+Existen diferentes maneras de llegar a este resultado. En este caso usaremos el cálculo y en otra publicación se
 presentará una generalización usando el álgebra lineal.
+
 Como estamos asumiendo que los datos se ajustan a un modelo de regresión tenemos que el error está dado por
 
 $$
@@ -83,8 +84,8 @@ Podemos entonces usar el [teorema de fermat para puntos estacionarios](https://e
 respecto de $\beta_0$ y $\beta_1$. Dicho teorema nos dice que si una funcion tiene un *extremum* local o punto crítico,
 entonces ese punto se haya cuando la derivada de esa función es 0. Aunque no se demuestra en esta publicación, sabemos
 que siempre existe solo un extremum y este es mínimo o *minimum* global para este problema, ya que este es un problema
-de [optimización convexa](https://en.wikipedia.org/w/index.php?title=Convex_optimization&oldid=1000262013). Por el
-momento tendremos que "creer ciegamente" en este hecho, pero espero poder publicar la demostración en otra ocasión.
+de [optimización convexa](https://en.wikipedia.org/w/index.php?title=Convex_optimization&oldid=1000262013).
+Por el momento se tendrá que asumir este hecho como verdadero, en una siguiente publicación compartiré la demostración.
 
 Dado que $ \sum_{i=1}^{n}(y_i-\widehat{y}_i)^2 = \sum_{i=1}^{n}(y_i - \beta_0 - \beta_1 x)^2 $ usando el teorema de
 fermat para puntos estacionarios para $\beta_0$ y $\beta_1$ respectivamente obtendremos los mínimos resolviendo el
