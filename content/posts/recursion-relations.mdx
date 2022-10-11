@@ -1,0 +1,47 @@
+---
+title: Resolviendo relaciones de recurrencia usando álgebra lineal
+date: "2022-10-06T00:12:20Z"
+description: "Método para resolver relaciones de recurrencia usando álgebra lineal"
+---
+
+import Image from "../../src/components/Utils/image"
+
+Una relación de recurrencia es una ecuación que define una secuencia recursiva;
+cada término de la secuencia es definido como una función de términos anteriores.
+
+## Sobre la secuencia de fibonacci
+Un ejemplo de una secuencia recursiva es la famosa secuencia de Fibonacci
+en dónde cada término de la sucesión es la suma de los dos números anteriores
+
+$$ 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, ... $$
+
+La cual se pude escribir como
+
+$$
+\begin{aligned}
+F_0 &= 0 \\
+F_1 &= 1 \\
+F_n &= F_{n-1} + F_{n-2}, \forall n \in \mathbb{N} \land n > 1
+\end{aligned}
+$$
+
+Esta forma de escribirla resulta muy conveniente para definir una función recursiva
+para calcular el valor de $F_n$ en algún lenguaje de programación, como por ejemplo en lenguaje C
+
+```cpp
+int fib(int n){
+    if(n == 0){
+        return 0;
+    }
+
+    if(n == 1){
+        return 1;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+```
+El gran inconveniente con esta implementación es que su complejidad algorítmica resulta ser exponencial.
+Podemos observar que por cada llamada a esta función, la mayoría de las veces se "expanden" otras
+dos llamadas. Por lo que su complejidad se acerca a $O(2^n)$. Por ejemplo para calcular fib(6), se hacen 23 llamadas
+
+<Image fileName="fibonacci.svg" className="small-image" alt="árbol de llamadas de la implementación recursiva de fibonacci" />
