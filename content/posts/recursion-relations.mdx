@@ -9,13 +9,12 @@ import Image from "../../src/components/Utils/image"
 Una relación de recurrencia es una ecuación que define una secuencia recursiva;
 cada término de la secuencia es definido como una función de términos anteriores.
 
-## Sobre la secuencia de fibonacci
 Un ejemplo de una secuencia recursiva es la famosa secuencia de Fibonacci
 en dónde cada término de la sucesión es la suma de los dos números anteriores
 
 $$ 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, ... $$
 
-La cual se pude escribir como
+La cual se puede escribir como
 
 $$
 \begin{aligned}
@@ -25,8 +24,8 @@ F_n &= F_{n-1} + F_{n-2}, \forall n \in \mathbb{N} \land n > 1
 \end{aligned}
 $$
 
-Esta forma de escribirla resulta muy conveniente para definir una función recursiva
-para calcular el valor de $F_n$ en algún lenguaje de programación, como por ejemplo en lenguaje C
+Esta forma de escribirla resulta muy conveniente para programar una función recursiva
+que calcule el valor de $F_n$ en algún lenguaje de programación, como por ejemplo en lenguaje C
 
 ```cpp
 int fib(int n){
@@ -42,6 +41,57 @@ int fib(int n){
 ```
 El gran inconveniente con esta implementación es que su complejidad algorítmica resulta ser exponencial.
 Podemos observar que por cada llamada a esta función, la mayoría de las veces se "expanden" otras
-dos llamadas. Por lo que su complejidad se acerca a $O(2^n)$. Por ejemplo para calcular fib(6), se hacen 23 llamadas
+dos llamadas. Por lo que su complejidad se acerca a $O(2^n)$. Por ejemplo para calcular fib(6), se tienen
+que hacer 23 llamadas
 
 <Image fileName="fibonacci.svg" className="small-image" alt="árbol de llamadas de la implementación recursiva de fibonacci" />
+
+Una mejora en la implementación permite bajar la complejidad a $O(n)$, es decir, resolver el problema
+en tiempo lineal. Como por ejemplo la función de recursión de cola (tail recursion) siguiente
+
+```cpp
+unsigned long fib(unsigned long n, unsigned long currentVal = 1, unsigned long previousVal = 0) {
+    if (n == 0) {
+        return previousVal;
+    }
+
+    if (n == 1) {
+        return currentVal;
+    }
+    return fib(n - 1, currentVal + previousVal, currentVal);
+}
+```
+Aun así queda la duda de si podría existir una implementación más eficiente
+
+## La fórmula de Binet
+
+Existen soluciones explícitas (también llamadas formas cerradas) a algunas relaciones de recurrencia. En el caso
+de la secuencia de Fibonacci se le atribuye a [Jacques Philippe Marie Binet](https://en.wikipedia.org/w/index.php?title=Jacques_Philippe_Marie_Binet&oldid=1067689697)
+la siguiente fórmula explícita para obtener $F_n$
+
+$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \left( \frac{\sqrt{5}+1}{2} \right)^n - \left( \frac{\sqrt{5}-1}{2} \right)^n \right] }$$
+
+cuya implementación podría ser
+
+```cpp
+const long double FIVE_SQUARE = pow(5, 0.5);
+const long double PHI = (FIVE_SQUARE + 1) / 2;
+const long double PSI = (FIVE_SQUARE - 1) / 2;
+
+unsigned long fib(unsigned long n) {
+    return ((pow(PHI, n) - pow(PSI, n)) / FIVE_SQUARE);
+}
+```
+La cual nos reduce la complejidad algorítmica aún más a $O(\log(n))$, ya que la manera más eficiente conocida de elevar a la potencia $n$
+tiene complejidad $O(\log(n))$. El único problema de esta implementación es que puede tener errores de redondeo para $n$ grandes. En este
+caso de implementación, a partir de $n > 71$ empiezan aparecer errores, sin embargo, con bibliotecas de precisión arbitraria se puede
+solventar este problema.
+
+Es fácil demostrar que la fórmula de Binet se cumple para todo $n \in \mathbb{N} \cup \{0\}$ usando inducción.
+
+Para $n=0$ vemos que se cumple
+
+$$
+F_0 = \frac{1}{\sqrt{5}} \left[ \left( \frac{\sqrt{5}+1}{2} \right)^0 - \left( \frac{\sqrt{5}-1}{2} \right)^0 \right]
+= \frac{1}{\sqrt{5}} \left[ 1 - 1 \right] = \frac{0}{\sqrt{5}} = 0
+$$
