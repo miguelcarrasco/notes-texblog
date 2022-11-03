@@ -69,29 +69,48 @@ Existen soluciones explícitas (también llamadas formas cerradas) a algunas rel
 de la secuencia de Fibonacci se le atribuye a [Jacques Philippe Marie Binet](https://en.wikipedia.org/w/index.php?title=Jacques_Philippe_Marie_Binet&oldid=1067689697)
 la siguiente fórmula explícita para obtener $F_n$
 
-$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \left( \frac{\sqrt{5}+1}{2} \right)^n - \left( \frac{\sqrt{5}-1}{2} \right)^n \right] }$$
+$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^n - \left( \frac{1-\sqrt{5}}{2} \right)^n \right] }$$
+
+Otra forma de escribir esta fórmula es la siguiente
+
+$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \phi^n - \psi^n \right] } $$
+
+donde $\phi=\frac{1+\sqrt{5}}{2}$ y $\psi=\frac{1-\sqrt{5}}{2}$
 
 cuya implementación podría ser
 
 ```cpp
 const long double FIVE_SQUARE = pow(5, 0.5);
-const long double PHI = (FIVE_SQUARE + 1) / 2;
-const long double PSI = (FIVE_SQUARE - 1) / 2;
+const long double PHI = (1 + FIVE_SQUARE) / 2;
+const long double PSI = (1 - FIVE_SQUARE) / 2;
 
 unsigned long fib(unsigned long n) {
     return ((pow(PHI, n) - pow(PSI, n)) / FIVE_SQUARE);
 }
 ```
-La cual nos reduce la complejidad algorítmica aún más a $O(\log(n))$, ya que la manera más eficiente conocida de elevar a la potencia $n$
-tiene complejidad $O(\log(n))$. El único problema de esta implementación es que puede tener errores de redondeo para $n$ grandes. En este
-caso de implementación, a partir de $n > 71$ empiezan aparecer errores, sin embargo, con bibliotecas de precisión arbitraria se puede
-solventar este problema.
+La cual nos reduce la complejidad algorítmica aún más a $O(\log(n))$, ya que la manera más eficiente conocida de elevar
+a la potencia $n$ tiene complejidad $O(\log(n))$. El único problema de esta implementación es que puede tener errores
+de redondeo para $n$ grandes. En esta implementación en C++, a partir de $n > 71$ empiezan a aparecer errores de redondeo,
+sin embargo es bastante interesante como es posible reducir la complejidad algorítmica con una fórmula explicita.
 
-Es fácil demostrar que la fórmula de Binet se cumple para todo $n \in \mathbb{N} \cup \{0\}$ usando inducción.
+Es fácil demostrar que la fórmula de Binet se cumple para todo $n \in \mathbb{N} \cup \{0\}$ usando
+[inducción fuerte](https://en.wikipedia.org/wiki/Mathematical_induction#Complete_(strong)_induction).
 
 Para $n=0$ vemos que se cumple
 
 $$
-F_0 = \frac{1}{\sqrt{5}} \left[ \left( \frac{\sqrt{5}+1}{2} \right)^0 - \left( \frac{\sqrt{5}-1}{2} \right)^0 \right]
+F_0 = \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^0 - \left( \frac{1-\sqrt{5}}{2} \right)^0 \right]
 = \frac{1}{\sqrt{5}} \left[ 1 - 1 \right] = \frac{0}{\sqrt{5}} = 0
 $$
+
+Para $n=1$ vemos que también se cumple
+
+$$
+\begin{aligned}
+F_1 &= \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^1 - \left( \frac{1-\sqrt{5}}{2} \right)^1 \right] \\
+&= \frac{1}{\sqrt{5}} \left[ \frac{1+\sqrt{5}-1+\sqrt{5}}{2} \right] \\
+&= \frac{1}{\sqrt{5}} \left[ \frac{2\sqrt{5}}{2} \right] = \frac{\sqrt{5}}{\sqrt{5}} = 1
+\end{aligned}
+$$
+
+Ahora supongamos que se cumple para $n=k$ y $n=k-1$ para algún $k$, vamos a demostrar que se cumple para $n=k+1$
