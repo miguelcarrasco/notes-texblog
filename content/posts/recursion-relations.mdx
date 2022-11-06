@@ -23,9 +23,13 @@ F_1 &= 1 \\
 F_n &= F_{n-1} + F_{n-2}, \forall n \in \mathbb{N} \land n > 1
 \end{aligned}
 $$
-
-Esta forma de escribirla resulta muy conveniente para programar una función recursiva
-que calcule el valor de $F_n$ en algún lenguaje de programación, como por ejemplo en lenguaje C
+Existen soluciones explícitas (también llamadas formas cerradas) a algunas relaciones de recurrencia,
+a lo largo de este artículo se mostrará como encontrar fórmulas explícitas para algunas de estas relaciones
+de recurrencia usando álgebra lineal. La gran utilidad es que se puede reducir la complejidad
+algorítmica del cálculo de elementos en las secuencias usando fórmulas explícitas. Por ejemplo en el caso de la
+secuencia de Fibonacci, vemos que la forma anterior de definir la secuencia de fibonacci resulta muy conveniente
+para programar una función recursiva que calcule el valor de $F_n$ en algún lenguaje de programación,
+como por ejemplo en lenguaje C
 
 ```cpp
 int fib(int n){
@@ -61,23 +65,54 @@ unsigned long fib(unsigned long n, unsigned long currentVal = 1, unsigned long p
     return fib(n - 1, currentVal + previousVal, currentVal);
 }
 ```
-Aun así queda la duda de si podría existir una implementación más eficiente
+Aun así queda la duda de si podría existir una implementación más eficiente. De hecho se puede reducir a un problema
+que se resuelve en tiempo logarítmico, es decir, existe un algoritmo con complejidad $O(\log(n))$.
 
 ## La fórmula de Binet
 
-Existen soluciones explícitas (también llamadas formas cerradas) a algunas relaciones de recurrencia. En el caso
-de la secuencia de Fibonacci se le atribuye a [Jacques Philippe Marie Binet](https://en.wikipedia.org/w/index.php?title=Jacques_Philippe_Marie_Binet&oldid=1067689697)
+En el caso de la secuencia de Fibonacci se le atribuye a [Jacques Philippe Marie Binet](https://en.wikipedia.org/w/index.php?title=Jacques_philippe_Marie_Binet&oldid=1067689697)
 la siguiente fórmula explícita para obtener $F_n$
 
 $$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^n - \left( \frac{1-\sqrt{5}}{2} \right)^n \right] }$$
 
 Otra forma de escribir esta fórmula es la siguiente
 
-$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \phi^n - \psi^n \right] } $$
+$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \varphi^n - \psi^n \right] } $$
 
-donde $\phi=\frac{1+\sqrt{5}}{2}$ y $\psi=\frac{1-\sqrt{5}}{2}$
+donde $\varphi=\frac{1+\sqrt{5}}{2}$ y $\psi=\frac{1-\sqrt{5}}{2}$
 
-cuya implementación podría ser
+A $\varphi$ se le suele denominar la proporción áurea ([Golden ratio](https://en.wikipedia.org/wiki/Golden_ratio)).
+Además note la siguientes propiedades
+
+$$
+\begin{aligned}
+\varphi^{-1} &= \frac{2}{1+\sqrt{5}} = \frac{2(1-\sqrt{5})}{(1+\sqrt{5})(1-\sqrt{5})} \\
+&= \frac{2(1-\sqrt{5})}{1-5} = \frac{-2(1-\sqrt{5})}{4} = - \frac{1-\sqrt{5}}{2} = - \psi
+\end{aligned}
+$$
+
+Y a su vez
+
+$$
+\begin{aligned}
+\psi^{-1} &= \frac{2}{1-\sqrt{5}} = \frac{2(1+\sqrt{5})}{(1-\sqrt{5})(1+\sqrt{5})} \\
+&= \frac{2(1+\sqrt{5})}{1-5} = \frac{-2(1+\sqrt{5})}{4} = - \frac{1+\sqrt{5}}{2} = - \varphi
+\end{aligned}
+$$
+
+De donde
+
+$$
+1+\varphi^{-1} = 1 - \psi = 1 - \frac{1-\sqrt{5}}{2} = \frac{2-1+\sqrt{5}}{2} = \frac{1+\sqrt{5}}{2} = \varphi
+$$
+
+y a su vez
+
+$$
+1+\psi^{-1} = 1 - \varphi = 1 - \frac{1+\sqrt{5}}{2} = \frac{2-1-\sqrt{5}}{2} = \frac{1-\sqrt{5}}{2} = \psi
+$$
+
+Una implementación de la fórmula explícita en C++, podría ser la siguiente
 
 ```cpp
 const long double FIVE_SQUARE = pow(5, 0.5);
@@ -91,7 +126,10 @@ unsigned long fib(unsigned long n) {
 La cual nos reduce la complejidad algorítmica aún más a $O(\log(n))$, ya que la manera más eficiente conocida de elevar
 a la potencia $n$ tiene complejidad $O(\log(n))$. El único problema de esta implementación es que puede tener errores
 de redondeo para $n$ grandes. En esta implementación en C++, a partir de $n > 71$ empiezan a aparecer errores de redondeo,
-sin embargo es bastante interesante como es posible reducir la complejidad algorítmica con una fórmula explicita.
+sin embargo es bastante interesante como es posible reducir la complejidad algorítmica con una fórmula explicita. Más
+adelante mostraremos como evitar este problema, pero primero es conveniente entender esta fórmula.
+
+## Demostración por inducción fuerte de la fórmula de Binet
 
 Es fácil demostrar que la fórmula de Binet se cumple para todo $n \in \mathbb{N} \cup \{0\}$ usando
 [inducción fuerte](https://en.wikipedia.org/wiki/Mathematical_induction#Complete_(strong)_induction).
@@ -99,8 +137,10 @@ Es fácil demostrar que la fórmula de Binet se cumple para todo $n \in \mathbb{
 Para $n=0$ vemos que se cumple
 
 $$
-F_0 = \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^0 - \left( \frac{1-\sqrt{5}}{2} \right)^0 \right]
-= \frac{1}{\sqrt{5}} \left[ 1 - 1 \right] = \frac{0}{\sqrt{5}} = 0
+\begin{aligned}
+F_0 &= \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^0 - \left( \frac{1-\sqrt{5}}{2} \right)^0 \right] \\
+&= \frac{1}{\sqrt{5}} \left[ 1 - 1 \right] = \frac{0}{\sqrt{5}} = 0
+\end{aligned}
 $$
 
 Para $n=1$ vemos que también se cumple
@@ -113,4 +153,270 @@ F_1 &= \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^1 - \left( 
 \end{aligned}
 $$
 
-Ahora supongamos que se cumple para $n=k$ y $n=k-1$ para algún $k$, vamos a demostrar que se cumple para $n=k+1$
+Ahora supongamos que se cumple para $n=k$ y $n=k-1$ (y para todo entero anterior a k, mayor o igual a 0) para algún $k$,
+vamos a demostrar que se cumple para $n=k+1$. Por simplicidad podemos usar la fórmula de Binet que usa a $\varphi$ y
+a $\psi$, de tal manera que de acuerdo a nuestra hipótesis de inducción se cumple que
+$ F_k = \frac{1}{\sqrt{5}} \left[ \varphi^k - \psi^k \right] $ y
+$ F_{k-1} = \frac{1}{\sqrt{5}} \left[ \varphi^{k-1} - \psi^{k-1} \right] $. Por lo que entonces
+
+$$
+\begin{aligned}
+F_{k+1} &= F_{k} + F_{k-1} \\
+&= \frac{1}{\sqrt{5}} \left[ \varphi^k - \psi^k \right] + \frac{1}{\sqrt{5}} \left[ \varphi^{k-1} - \psi^{k-1} \right] \\
+&= \frac{1}{\sqrt{5}} \left[ \varphi^k - \psi^k + \varphi^{k-1} - \psi^{k-1} \right] \\
+&= \frac{1}{\sqrt{5}} \left[ \varphi^k  + \varphi^{k-1} - \psi^k - \psi^{k-1}  \right] \\
+&= \frac{1}{\sqrt{5}} \left[ (\varphi^k  + \varphi^{k-1}) - (\psi^{k} + \psi^{k-1}) \right] \\
+&= \frac{1}{\sqrt{5}} \left[ \varphi^k (1 + \varphi^{-1}) - \psi^{k} (1 + \psi^{-1}) \right] \\
+\end{aligned}
+$$
+
+Y de las propiedades explicadas en la sección anterior, dado que $1 + \varphi^{-1} = \varphi$ y $1 + \psi^{-1} = \psi$,
+tenemos que
+
+$$
+\begin{aligned}
+F_{k+1} &= \frac{1}{\sqrt{5}} \left[ \varphi^k (1 + \varphi^{-1}) - \psi^{k} (1 + \psi^{-1}) \right] \\
+&= \frac{1}{\sqrt{5}} \left[ \varphi^k \varphi - \psi^{k} \psi \right] \\
+&= \frac{1}{\sqrt{5}} \left[ \varphi^{k+1} - \psi^{k+1} \right] \\
+\end{aligned}
+$$
+
+Que justamente era lo que queríamos demostrar. $\square$
+
+## Derivación de la fórmula de Binet usando álgebra lineal
+
+Aunque hemos demostrado la fórmula de Binet usando inducción fuerte y con ello tenemos la certeza de que dicha fórmula
+es verdadera, aún no tenemos idea de cómo fue que se obtuvo esa fórmula en primer lugar.
+Una forma de encontrar esta fórmula es haciendo uso del álgebra lineal, usando propiedades de ciertas matrices.
+
+Notemos primero que cualquier término de la secuencia lo podemos escribir como combinación lineal de los términos
+$F_1$ y $F_0$ que sabemos por definición tienen valores $F_1=1$ y $F_0=0$, por ejemplo, para $F_2$ y $F_1$ tenemos que
+
+$$
+\begin{aligned}
+F_2 &= 1 \cdot F_1 + 1 \cdot F_0 = 1 + 0 = 1 \\
+F_1 &= 1 \cdot F_1 + 0 \cdot F_0 = 1 + 0 = 1
+\end{aligned}
+$$
+
+Esto mismo lo podemos escribir usando una matriz
+
+$$
+\begin{bmatrix}
+F_2 \\
+F_1
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+F_1 \\
+F_0
+\end{bmatrix}
+$$
+
+Y observamos que podemos escribir también $F_3$ y $F_2$ como
+
+$$
+\begin{aligned}
+\begin{bmatrix}
+F_3 \\
+F_2
+\end{bmatrix}
+&=
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+F_2 \\
+F_1
+\end{bmatrix}
+\\
+&=
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}
+\begin{bmatrix}
+F_1 \\
+F_0
+\end{bmatrix}
+\\
+&=
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}^2
+\begin{bmatrix}
+F_1 \\
+F_0
+\end{bmatrix}
+\end{aligned}
+$$
+
+Es claro que repitiendo este proceso $n$ veces obtendríamos
+
+$$
+\begin{bmatrix}
+F_{n+1} \\
+F_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}^n
+\begin{bmatrix}
+F_1 \\
+F_0
+\end{bmatrix}
+$$
+
+Ahora, si definimos
+
+$$
+A=
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}
+$$
+
+Podemos rescribir la ecuación así
+$$
+\begin{bmatrix}
+F_{n+1} \\
+F_{n}
+\end{bmatrix}
+=
+A^n
+\begin{bmatrix}
+F_1 \\
+F_0
+\end{bmatrix}
+$$
+
+Es claro que si encontramos una forma explícita para calcular $A^n$, podremos encontrar una fórmula explícita para
+$F_{n}$ y $F_{n+1}$. En el álgebra matricial, la mejor forma de elevar a la potencia $n$ una matriz es diagonalizando
+dicha matriz. Es decir, si podemos encontrar una matriz invertible $P$ y otra matriz $D$ tal que
+
+$$
+A = PDP^{-1}
+$$
+
+donde $D$ sea una matriz diagonal, es decir
+
+$$
+D = \begin{bmatrix}
+\lambda_1 & 0\\
+0 & \lambda_2
+\end{bmatrix}
+$$
+
+Calcular $A^n$ sería muy sencillo, ya que
+
+$$
+\begin{aligned}
+A^n &= (PDP^{-1})^n = (PDP^{-1}) (PDP^{-1}) \cdots (PDP^{-1}) \\
+&= PD(P^{-1}P)D(P^{-1}P) \cdots (P^{-1}P)DP^{-1} = PD^nP^{-1}
+\end{aligned}
+$$
+
+Y como D es una matriz diagonal
+
+$$
+D^n =
+\begin{bmatrix}
+\lambda_1 & 0\\
+0 & \lambda_2
+\end{bmatrix}^n
+=
+\begin{bmatrix}
+\lambda_1^n & 0\\
+0 & \lambda_2^n
+\end{bmatrix}
+$$
+
+solo tendríamos que elevar a la $n$ los elementos en la diagonal. Para obtener P y D notemos que si $A=PDP^{-1}$, entonces
+multiplicando por la derecha ambos lados de la ecuación por $P$ obtendríamos
+$$
+\begin{aligned}
+A(P) &= PDP^{-1}(P) \\
+AP &= PD \\
+AP & = P
+\begin{bmatrix}
+\lambda_1 & 0 \\
+0 & \lambda_2a
+\end{bmatrix}
+\end{aligned}
+$$
+
+Y podemos escribir $P$ como una [matriz por bloques](https://en.wikipedia.org/wiki/Block_matrix) de dos vectores
+
+$$
+P =
+\begin{bmatrix}
+\bm{v_1} & \bm{v_2}
+\end{bmatrix}
+$$
+
+Por lo que podemos escribir la ecuación $AP = PD$ como
+
+$$
+A\bm{v_i}=\lambda_i\bm{v_i} \quad (i=1,2)
+$$
+
+De donde podemos ver que $\bm{v_i}$ son los eigenvectores de $A$ y $\lambda_i$ los eigenvalores. Nótese además que
+
+$$
+A\bm{v_i}=\lambda_i\bm{v_i} \\
+A\bm{v_i} - \lambda_i\bm{v_i} = 0 \\
+$$
+
+Es decir para todo $i$ se debe cumplir
+
+$$
+(A - \lambda_i I)\bm{v_i} = 0
+$$
+
+y esa ecuación es cierta cuando $\bm{v_i}=\bm{0}$ o cuando $\det(A - \lambda_i I) = 0$. Para encontrar los valores de $\lambda_i$
+resolvemos
+
+$$
+\begin{aligned}
+\det(A-\lambda I) &=
+\det \left(
+\begin{bmatrix}
+1 & 1 \\
+1 & 0
+\end{bmatrix}
+-
+\begin{bmatrix}
+\lambda & 0 \\
+0 & \lambda
+\end{bmatrix}
+\right)
+&= 0 \\
+&= \det \left(
+\begin{bmatrix}
+1 - \lambda & 1 \\
+1 & -\lambda
+\end{bmatrix}
+\right)
+&= 0 \\
+&= \lambda^2 -\lambda -1 &= 0
+\end{aligned}
+$$
+
+Y resolviendo para $\lambda$ tenemos que
+$$
+\lambda_1 = \frac{1+\sqrt{5}}{2} = \varphi \\
+\lambda_2 = \frac{1-\sqrt{5}}{2} = \psi
+$$
