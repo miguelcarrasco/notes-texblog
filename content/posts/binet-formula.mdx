@@ -1,16 +1,23 @@
 ---
-title: Resolviendo relaciones de recurrencia usando álgebra lineal
-date: "2022-10-06T00:12:20Z"
-description: "Método para resolver relaciones de recurrencia usando álgebra lineal"
+title: Demostracíón y derivación de la fórmula de Binet
+date: "2022-11-08T03:08:19Z"
+description: "Se demuestra y se deriva la fórmula de Binet para obtener una forma cerrada o explícita de la secuencia
+de fibonacci"
 ---
 
-import Image from "../../src/components/Utils/image"
+En la literatura y en la web se pueden encontrar varias demostraciones para la fórmula de Binet, pero en mi experiencia
+algunas de estas demostraciones aunque parecen claras, carecen de cierto formalismo que en mi caso al menos, no me complace.
 
-Una relación de recurrencia es una ecuación que define una secuencia recursiva;
-cada término de la secuencia es definido como una función de términos anteriores.
+Hay otras demostraciones en donde el formalismo está presente, sin embargo no suelen ser tan claras. En este artículo trato
+de balancear estas dos situaciones tratando de usar un lenguaje muy claro, con el suficiente formalismo, sin obviar u omitir
+pasos con el fin de aumentar la claridad, además de servirme como recordatorio.
 
-Un ejemplo de una secuencia recursiva es la famosa secuencia de Fibonacci
-en dónde cada término de la sucesión es la suma de los dos números anteriores
+La fórmula de Binet es una fórmula explícita para obtener cualquier término de la secuencia de Fibonacci.
+
+## La secuencia de Fibonacci
+
+La [secuencia de Fibonacci](https://en.wikipedia.org/wiki/Fibonacci_number) es una famosa sucesión de enteros
+donde cada término es la suma de los dos términos anteriores, empezando por el $0$ y el $1$, es decir
 
 $$ 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, ... $$
 
@@ -23,57 +30,13 @@ F_1 &= 1 \\
 F_n &= F_{n-1} + F_{n-2}, \forall n \in \mathbb{N} \land n > 1
 \end{aligned}
 $$
-Existen soluciones explícitas (también llamadas formas cerradas) a algunas relaciones de recurrencia,
-a lo largo de este artículo se mostrará como encontrar fórmulas explícitas para algunas de estas relaciones
-de recurrencia usando álgebra lineal. La gran utilidad es que se puede reducir la complejidad
-algorítmica del cálculo de elementos en las secuencias usando fórmulas explícitas. Por ejemplo en el caso de la
-secuencia de Fibonacci, vemos que la forma anterior de definir la secuencia de fibonacci resulta muy conveniente
-para programar una función recursiva que calcule el valor de $F_n$ en algún lenguaje de programación,
-como por ejemplo en lenguaje C
-
-```cpp
-int fib(int n){
-    if(n == 0){
-        return 0;
-    }
-
-    if(n == 1){
-        return 1;
-    }
-    return fib(n - 1) + fib(n - 2);
-}
-```
-El gran inconveniente con esta implementación es que su complejidad algorítmica resulta ser exponencial.
-Podemos observar que por cada llamada a esta función, la mayoría de las veces se "expanden" otras
-dos llamadas. Por lo que su complejidad se acerca a $O(2^n)$. Por ejemplo para calcular fib(6), se tienen
-que hacer 23 llamadas
-
-<Image fileName="fibonacci.svg" className="small-image" alt="árbol de llamadas de la implementación recursiva de fibonacci" />
-
-Una mejora en la implementación permite bajar la complejidad a $O(n)$, es decir, resolver el problema
-en tiempo lineal. Como por ejemplo la función de recursión de cola (tail recursion) siguiente
-
-```cpp
-unsigned long fib(unsigned long n, unsigned long currentVal = 1, unsigned long previousVal = 0) {
-    if (n == 0) {
-        return previousVal;
-    }
-
-    if (n == 1) {
-        return currentVal;
-    }
-    return fib(n - 1, currentVal + previousVal, currentVal);
-}
-```
-Aun así queda la duda de si podría existir una implementación más eficiente. De hecho se puede reducir a un problema
-que se resuelve en tiempo logarítmico, es decir, existe un algoritmo con complejidad $O(\log(n))$.
 
 ## La fórmula de Binet
 
-En el caso de la secuencia de Fibonacci se le atribuye a [Jacques Philippe Marie Binet](https://en.wikipedia.org/w/index.php?title=Jacques_philippe_Marie_Binet&oldid=1067689697)
-la siguiente fórmula explícita para obtener $F_n$
+Se le atribuye a [Jacques Philippe Marie Binet](https://en.wikipedia.org/w/index.php?title=Jacques_philippe_Marie_Binet&oldid=1067689697)
+la siguiente fórmula explícita para obtener $F_n$ de los términos de la secuencia de fibonacci
 
-$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^n - \left( \frac{1-\sqrt{5}}{2} \right)^n \right] }$$
+$$\boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^n - \left( \frac{1-\sqrt{5}}{2} \right)^n \right] }$$
 
 Otra forma de escribir esta fórmula es la siguiente
 
@@ -81,8 +44,19 @@ $$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \varphi^n - \psi^n \right] } $$
 
 donde $\varphi=\frac{1+\sqrt{5}}{2}$ y $\psi=\frac{1-\sqrt{5}}{2}$
 
-A $\varphi$ se le suele denominar la proporción áurea ([Golden ratio](https://en.wikipedia.org/wiki/Golden_ratio)).
-Además note la siguientes propiedades
+A $\varphi$ se le suele denominar la proporción áurea ([Golden ratio](https://en.wikipedia.org/wiki/Golden_ratio) en inglés).
+
+Existen unas propiedades entre $\varphi$ y $\psi$ muy útiles que usaremos en las siguientes demostraciones. Estas propiedades
+son las siguientes
+
+1. $\varphi^{-1} = \psi$
+2. $\psi^{-1} = - \varphi$
+3. $\varphi = 1+\varphi^{-1}$
+4. $\psi = 1+\psi^{-1}$
+
+Demostración de estas propiedades:
+
+1.
 
 $$
 \begin{aligned}
@@ -91,7 +65,7 @@ $$
 \end{aligned}
 $$
 
-Y a su vez
+2.
 
 $$
 \begin{aligned}
@@ -100,35 +74,19 @@ $$
 \end{aligned}
 $$
 
-De donde
+3.
 
 $$
 1+\varphi^{-1} = 1 - \psi = 1 - \frac{1-\sqrt{5}}{2} = \frac{2-1+\sqrt{5}}{2} = \frac{1+\sqrt{5}}{2} = \varphi
 $$
 
-y a su vez
+4.
 
 $$
 1+\psi^{-1} = 1 - \varphi = 1 - \frac{1+\sqrt{5}}{2} = \frac{2-1-\sqrt{5}}{2} = \frac{1-\sqrt{5}}{2} = \psi
 $$
 
-Una implementación de la fórmula explícita en C++, podría ser la siguiente
-
-```cpp
-const long double FIVE_SQUARE = pow(5, 0.5);
-const long double PHI = (1 + FIVE_SQUARE) / 2;
-const long double PSI = (1 - FIVE_SQUARE) / 2;
-
-unsigned long fib(unsigned long n) {
-    return ((pow(PHI, n) - pow(PSI, n)) / FIVE_SQUARE);
-}
-```
-La cual nos reduce la complejidad algorítmica aún más a $O(\log(n))$, ya que la manera más eficiente conocida de elevar
-a la potencia $n$ tiene complejidad $O(\log(n))$ usando [exponenciación por cuadrados](https://en.wikipedia.org/wiki/Exponentiation_by_squaring).
-El único problema de esta implementación es que puede tener errores
-de redondeo para $n$ grandes. En esta implementación en C++, a partir de $n > 71$ empiezan a aparecer errores de redondeo,
-sin embargo es bastante interesante como es posible reducir la complejidad algorítmica con una fórmula explicita. Más
-adelante mostraremos como evitar este problema, pero primero es conveniente entender esta fórmula.
+De donde quedan demostradas las propiedades $\square$.
 
 ## Demostración por inducción fuerte de la fórmula de Binet
 
@@ -154,9 +112,9 @@ F_1 &= \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^1 - \left( 
 \end{aligned}
 $$
 
-Ahora supongamos que se cumple para $n=k$ y $n=k-1$ (y para todo entero anterior a k, mayor o igual a 0) para algún $k$,
-vamos a demostrar que se cumple para $n=k+1$. Por simplicidad podemos usar la fórmula de Binet que usa a $\varphi$ y
-a $\psi$, de tal manera que de acuerdo a nuestra hipótesis de inducción se cumple que
+Ahora supongamos que se cumple para $n=k$, $n=k-1$ y para todo entero anterior a k, mayor o igual a 0, para algún $k$.
+Vamos a demostrar que eso implica que se cumple para $n=k+1$. Por simplicidad usaremos la forma que usa a $\varphi$ y
+a $\psi$, de tal manera que de acuerdo a nuestra hipótesis de inducción se cumple
 $ F_k = \frac{1}{\sqrt{5}} \left[ \varphi^k - \psi^k \right] $ y
 $ F_{k-1} = \frac{1}{\sqrt{5}} \left[ \varphi^{k-1} - \psi^{k-1} \right] $. Por lo que entonces
 
@@ -188,7 +146,7 @@ Que justamente era lo que queríamos demostrar. $\square$
 
 Aunque hemos demostrado la fórmula de Binet usando inducción fuerte y con ello tenemos la certeza de que dicha fórmula
 es verdadera, aún no tenemos idea de cómo fue que se obtuvo esa fórmula en primer lugar.
-Una forma de encontrar esta fórmula es haciendo uso del álgebra lineal, usando propiedades de ciertas matrices.
+Una forma de encontrar esta fórmula es haciendo uso del álgebra lineal.
 
 Notemos primero que podemos escribir $F_2$ y $F_1$ en forma matricial como
 
@@ -252,7 +210,7 @@ F_0
 \end{aligned}
 $$
 
-Es claro que repitiendo este proceso $n$ veces obtendríamos
+Es claro que repitiendo este proceso $n$ veces podemos escribir $F_{n+1}$ y $F_{n}$ como
 
 $$
 \begin{bmatrix}
@@ -280,7 +238,7 @@ A=
 \end{bmatrix}
 $$
 
-Podemos rescribir la relación de recurrencia para la secuencia de fibonacci como
+Podemos rescribir esta matriz como
 
 $$
 \begin{bmatrix}
@@ -295,7 +253,7 @@ F_0
 \end{bmatrix}
 $$
 
-Es claro que si encontramos una forma explícita para calcular $A^n$, podremos encontrar una fórmula explícita para
+Es claro que si encontramos una forma explícita para calcular $A^n$, se obtendrá una fórmula explícita para
 $F_{n}$ y $F_{n+1}$. Una forma de simplificar el cálculo de elevar a la potencia $n$ una matriz, es mediante un
 proceso de diagonalización. Es decir, si podemos encontrar una matriz invertible $P$ y otra matriz $D$ tal que
 
@@ -336,10 +294,10 @@ D^n =
 \end{bmatrix}
 $$
 
-por lo que solo tendríamos que elevar a la $n$ los elementos en la diagonal y calcular $P$ y $P^{-1}$.
+por lo que solo tendríamos que elevar a la $n$ los elementos en la diagonal, calcular $P$ y $P^{-1}$ y expandir $PDP^{-1}$.
 Para obtener $P$ y $D$ a partir de $A$ podemos usar el [teorema de eigen descomposición](https://mathworld.wolfram.com/EigenDecompositionTheorem.html).
 Donde D estaría formada por los [eigenvalores](https://en.wikipedia.org/wiki/Eigenvalues_and_eigenvectors) de A en
-los elementos de su diagonal, es decir $\lambda_i$ para valores de $i \in {1,2}$ serían dichos eigenvalores y $P$ estaría definida como una
+los elementos de su diagonal, es decir $\lambda_i$ para valores de $i \in \{1,2\}$ serían dichos eigenvalores y $P$ estaría definida como una
 [matriz por bloques](https://en.wikipedia.org/wiki/Block_matrix) de los dos eigenvectores correspondientes a dichos eigenvalores.
 
 $$
@@ -424,8 +382,7 @@ P &= PDP^{-1} \\
 \end{aligned}
 $$
 
-que claramente es la diagonalización que requerimos para encontrar la fórmula explícita de $A^n$.
-Dado que $A\bm{v_i}=\lambda_i\bm{v_i} \quad \forall i \in \{1,2\}$, claramente tenemos que
+Ahora bien, dado que $A\bm{v_i}=\lambda_i\bm{v_i} \quad \forall i \in \{1,2\}$, tenemos que
 
 $$
 \begin{aligned}
@@ -439,10 +396,12 @@ $$
 (A - \lambda_i I) \bm{v_i} = \bm{0} \quad \forall i \in \{1,2\}
 $$
 
-donde $I$ es la matriz identidad. Vemos que solo puede cumplirse esta identidad ya sea cuando $\bm{v_i}$ sean $\bm{0}$
-lo cual no nos serviría para diagonalizar, o bien cuando $\det(A - \lambda_i I) = 0$.
+donde $I$ es la matriz identidad. Vemos que solo puede cumplirse esta identidad ya sea cuando todo $\bm{v_i}$ sea igual
+a $\bm{0}$ o bien cuando $\det(A - \lambda_i I) = 0$. Los vectores cero no nos serían útiles para diagonalizar, además de que
+ningún eigenvector puede ser el vector 0, por lo que usaremos la segunda identidad para encontrar los valores de $\lambda_i$
+y $\bm{v_i}$.
 
-Por lo que para encontrar los valores de $\lambda_i$ resolvemos
+Por lo tanto para encontrar los valores de $\lambda_i$ vemos que
 
 $$
 \begin{aligned}
@@ -470,8 +429,8 @@ $$
 \end{aligned}
 $$
 
-Que es el llamado [polinomio característico](https://en.wikipedia.org/wiki/Characteristic_polynomial).
-Y resolviendo para $\lambda$ tenemos que
+$\lambda^2 -\lambda -1$ es el denominado [polinomio característico](https://en.wikipedia.org/wiki/Characteristic_polynomial).
+Resolviendo para $\lambda$ encontrando las raíces del polinomio tenemos que
 
 $$
 \lambda_1 = \frac{1+\sqrt{5}}{2} = \varphi \\
@@ -516,5 +475,7 @@ v_{12}
 \end{bmatrix}
 \end{aligned}
 $$
+
+Y usando las propiedades $$
 
 Resolviendo dicho sistema obtenemos que
