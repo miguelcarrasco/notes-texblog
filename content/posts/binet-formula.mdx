@@ -6,11 +6,9 @@ de fibonacci"
 ---
 
 En la literatura y en la web se pueden encontrar varias demostraciones para la fórmula de Binet, pero en mi experiencia
-algunas de estas demostraciones aunque parecen claras, carecen de cierto formalismo que en mi caso al menos, no me complace.
-
-Hay otras demostraciones en donde el formalismo está presente, sin embargo no suelen ser tan claras. En este artículo trato
-de balancear estas dos situaciones tratando de usar un lenguaje muy claro, con el suficiente formalismo, sin obviar u omitir
-pasos con el fin de aumentar la claridad, además de servirme como recordatorio.
+algunas de estas demostraciones carecen del formalismo necesario. También hay otras demostraciones en donde el formalismo está presente,
+sin embargo no suelen ser tan claras. En este artículo trato de balancear estas dos situaciones tratando de usar un lenguaje claro,
+con el suficiente formalismo, sin obviar u omitir pasos.
 
 La fórmula de Binet es una fórmula explícita para obtener cualquier término de la secuencia de Fibonacci.
 
@@ -37,6 +35,10 @@ Se le atribuye a [Jacques Philippe Marie Binet](https://en.wikipedia.org/w/index
 la siguiente fórmula explícita para obtener $F_n$ de los términos de la secuencia de fibonacci
 
 $$\boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^n - \left( \frac{1-\sqrt{5}}{2} \right)^n \right] }$$
+
+quien la encontró en 1843. Aunque de hecho, fue descubierta en 1718 por el matemático francés [Abraham De Moivre](https://en.wikipedia.org/wiki/Abraham_de_Moivre)
+(1667–1754) usando funciones generadoras.
+Fue derivado de forma independiente en 1844 por el ingeniero y matemático francés [Gabriel Lamé](https://en.wikipedia.org/wiki/Gabriel_Lamé) (1795–1870).
 
 Otra forma de escribir esta fórmula es la siguiente
 
@@ -378,7 +380,7 @@ Y multiplicando $P^{-1}$ por la derecha ambos lados de la ecuación obtenemos
 $$
 \begin{aligned}
 AP(P^{-1}) &= PD(P^{-1}) \\
-P &= PDP^{-1} \\
+A &= PDP^{-1} \\
 \end{aligned}
 $$
 
@@ -476,6 +478,274 @@ v_{12}
 \end{aligned}
 $$
 
-Y usando las propiedades $$
+Y de las propiedades anteriores, sabemos que $1-\varphi = \psi$, así como $\psi^{-1}=-\varphi$ por lo que
 
-Resolviendo dicho sistema obtenemos que
+$$
+\begin{bmatrix}
+\psi & 1 \\
+1 & \psi^{-1}
+\end{bmatrix}
+\begin{bmatrix}
+v_{11} \\
+v_{12}
+\end{bmatrix}
+=
+\begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+$$
+
+Reduciendo el sistema de ecuaciones resultante con Gauss-Jordan
+
+$$
+\left(\hspace{-5pt}\begin{array}{cc|c}
+\psi & 1 & 0 \\
+1 & \psi^{-1} & 0
+\end{array}\hspace{-5pt}\right)
+\xrightarrow{\psi R_2 \to R_2}
+\left(\hspace{-5pt}\begin{array}{cc|c}
+\psi & 1 & 0 \\
+\psi & 1 & 0
+\end{array}\hspace{-5pt}\right)
+\xrightarrow{R_1-R_2 \to R_2}
+\left(\hspace{-5pt}\begin{array}{cc|c}
+\psi & 1 & 0 \\
+0 & 0 & 0
+\end{array}\hspace{-5pt}\right)
+$$
+
+De donde vemos que
+
+$$
+\psi v_{11}+v_{12}=0
+$$
+
+y podemos tomar $v_{12}=1$ por conveniencia de tal manera que
+
+$$
+v_{11}=\frac{-1}{\psi}=-\psi^{-1} = \varphi
+$$
+
+por lo que el eigenvector $\bm{v_1}$ tomaría la forma
+
+$$
+\bm{v_1}=
+\begin{bmatrix}
+\varphi \\
+1
+\end{bmatrix}
+$$
+
+Para el caso del eigenvalor $\lambda_2$ (recordando que $\lambda_2=\psi$) tendríamos que
+$$
+\begin{aligned}
+(A - \lambda_2 I) \bm{v_2} &= \bm{0} \\
+\begin{bmatrix}
+1 & 1 \\
+1 & 0
+\end{bmatrix}
+-
+\begin{bmatrix}
+\psi & 0 \\
+0 & \psi
+\end{bmatrix}
+\begin{bmatrix}
+v_{21} \\
+v_{22}
+\end{bmatrix}
+&= \begin{bmatrix}
+0 \\
+0
+\end{bmatrix} \\
+\begin{bmatrix}
+1-\psi & 1 \\
+1 & -\psi
+\end{bmatrix}
+\begin{bmatrix}
+v_{21} \\
+v_{22}
+\end{bmatrix}
+&= \begin{bmatrix}
+0 \\
+0
+\end{bmatrix}
+\end{aligned}
+$$
+
+Y por la simetría de la situación es fácil concluir que
+
+$$
+\bm{v_2}=
+\begin{bmatrix}
+\psi \\
+1
+\end{bmatrix}
+$$
+
+De donde
+
+$$
+P=
+\begin{bmatrix}
+\varphi & \psi \\
+1 & 1
+\end{bmatrix}
+$$
+
+y por lo tanto
+
+$$
+P^{-1} = \frac{1}{\det(P)}\text{adj}(P)
+$$
+
+y dado que
+
+$$
+\begin{aligned}
+\det(P) &= \varphi - \psi \\
+&= \frac{1+\sqrt{5}}{2} - \frac{1-\sqrt{5}}{2} \\
+&= \frac{1+\sqrt{5}-1+\sqrt{5}}{2} \\
+&= \frac{2\sqrt{5}}{2} \\
+&= \sqrt{5}
+\end{aligned}
+$$
+
+y que
+
+$$
+\text{adj}(P) =
+\begin{bmatrix}
+1 & - \psi \\
+-1 & \varphi
+\end{bmatrix}
+$$
+
+entonces
+
+$$
+P^{-1} = \frac{1}{\sqrt{5}}
+\begin{bmatrix}
+1 & - \psi \\
+-1 & \varphi
+\end{bmatrix}
+$$
+
+por lo que entonces dado que $A^n = PD^nP^{-1}$ tenemos que
+$$
+\begin{aligned}
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}^n
+&=
+\begin{bmatrix}
+\varphi & \psi \\
+1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+\varphi & 0\\
+0 & \psi
+\end{bmatrix}^n
+\frac{1}{\sqrt{5}}
+\begin{bmatrix}
+1 & - \psi \\
+-1 & \varphi
+\end{bmatrix} \\
+&=
+\frac{1}{\sqrt{5}}
+\begin{bmatrix}
+\varphi & \psi \\
+1 & 1
+\end{bmatrix}
+\begin{bmatrix}
+\varphi^n & 0\\
+0 & \psi^n
+\end{bmatrix}
+\begin{bmatrix}
+1 & - \psi \\
+-1 & \varphi
+\end{bmatrix} \\
+&=
+\frac{1}{\sqrt{5}}
+\begin{bmatrix}
+\varphi^{n+1} & \psi^{n+1} \\
+\varphi^n & \psi^n
+\end{bmatrix}
+\begin{bmatrix}
+1 & - \psi \\
+-1 & \varphi
+\end{bmatrix} \\
+&=
+\frac{1}{\sqrt{5}}
+\begin{bmatrix}
+\varphi^{n+1} - \psi^{n+1} & \psi \varphi^{n+1} - \varphi \psi^{n+1}\\
+\varphi^n - \psi^n & \psi \varphi^n - \varphi \psi^n
+\end{bmatrix}
+\end{aligned}
+$$
+
+Finalmente vemos que
+$$
+\begin{aligned}
+\begin{bmatrix}
+F_{n+1} \\
+F_{n}
+\end{bmatrix}
+&=
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}^n
+\begin{bmatrix}
+F_1 \\
+F_0
+\end{bmatrix} \\
+&=
+\frac{1}{\sqrt{5}}
+\begin{bmatrix}
+\varphi^{n+1} - \psi^{n+1} & \psi \varphi^{n+1} - \varphi \psi^{n+1}\\
+\varphi^n - \psi^n & \psi \varphi^n - \varphi \psi^n
+\end{bmatrix}
+\begin{bmatrix}
+F_1 \\
+F_0
+\end{bmatrix} \\
+&=
+\frac{1}{\sqrt{5}}
+\begin{bmatrix}
+\varphi^{n+1} - \psi^{n+1} & \psi \varphi^{n+1} - \varphi \psi^{n+1}\\
+\varphi^n - \psi^n & \psi \varphi^n - \varphi \psi^n
+\end{bmatrix}
+\begin{bmatrix}
+1 \\
+0
+\end{bmatrix} \\
+&=
+\frac{1}{\sqrt{5}}
+\begin{bmatrix}
+\varphi^{n+1} - \psi^{n+1} \\
+\varphi^n - \psi^n
+\end{bmatrix}
+\end{aligned}
+$$
+
+De donde claramente tenemos que
+
+$$ F_{n+1} = \frac{1}{\sqrt{5}} \left[ \varphi^{n+1} - \psi^{n+1} \right] $$
+
+y
+
+$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \varphi^n - \psi^n \right] } $$
+
+Que es precisamente la fórmula de Binet $\square$.
+
+## Referencias
+
+- [Wikipedia: Fibonacci Number](https://en.wikipedia.org/wiki/Fibonacci_number)
+- [Wikipedia: Golden Ratio](https://en.wikipedia.org/wiki/Golden_ratio)
+- [Wikipedia: Characteristic polynomial](https://en.wikipedia.org/wiki/Characteristic_polynomial)
+- [Wolfram: Eigen Decomposition](https://mathworld.wolfram.com/EigenDecomposition.html)
+- [Wolfram: Eigen Decomposition Theorem](https://mathworld.wolfram.com/EigenDecompositionTheorem.html)
+- [Hyper-Textbook: Optimization Models and Applications, L. El Ghaoui, EECS Department, UC Berkeley - Spectral Theorem section](https://inst.eecs.berkeley.edu/~ee127/sp21/livebook/l_sym_sed.html)
+- Fibonacci and Lucas Numbers with Applications, Volume 1, 2nd Edition - Thomas Koshy
