@@ -1,0 +1,112 @@
+---
+title: Algoritmo para el cálculo de los términos de la secuencia de Fibonacci en tiempo O(log(n))
+date: "2022-11-09T03:14:24Z"
+description: "Se muestra una implementación eficiente para calcular los términos de la secuencia de fibonacci en tiempo logarítmico O(log(n))"
+---
+
+import Image from "../../src/components/Utils/image"
+
+Un problema muy recurrente en el estudio de algoritmos es la recursividad, para la cual se suele presentar de ejemplo clásico la
+famosa sucesión de Fibonacci, que está definida como la sucesión de enteros donde cada término está compuesto por la suma de
+los dos términos anteriores, empezando por el $0$ y el $1$
+
+$$ 0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, ... $$
+
+La cual se puede escribir como
+
+$$
+\begin{aligned}
+F_0 &= 0 \\
+F_1 &= 1 \\
+F_n &= F_{n-1} + F_{n-2}, \forall n \in \mathbb{N} \land n > 1
+\end{aligned}
+$$
+
+La forma anterior de definir la secuencia de fibonacci resulta muy conveniente
+para programar una función recursiva que calcule el valor de $F_n$ en algún lenguaje de programación,
+como por ejemplo en lenguaje C
+
+```cpp
+int fib(int n){
+    if(n == 0){
+        return 0;
+    }
+
+    if(n == 1){
+        return 1;
+    }
+    return fib(n - 1) + fib(n - 2);
+}
+```
+El gran inconveniente con esta implementación es que su complejidad algorítmica resulta ser exponencial.
+Podemos observar que por cada llamada a esta función, la mayoría de las veces se "expanden" otras
+dos llamadas. Por lo que su complejidad se acerca a $O(2^n)$. Por ejemplo para calcular fib(6), se tienen
+que hacer 23 llamadas a la misma función, muchas de las cuales repiten innecesariamente el mismo cálculo
+
+<Image fileName="fibonacci.svg" className="small-image" alt="árbol de llamadas de la implementación recursiva de fibonacci" />
+
+En este artículo presento ideas interesantes para reducir la complejidad computacional de este problema con diferentes
+algoritmos.
+
+## Reducción a tiempo lineal $O(n)$
+
+Una mejora en la implementación permite bajar la complejidad a $O(n)$, es decir, resolver el problema
+en tiempo lineal. Como por ejemplo la función de recursión de cola (tail recursion) siguiente
+
+```cpp
+unsigned long fib(unsigned long n, unsigned long currentVal = 1,
+    unsigned long previousVal = 0) {
+    if (n == 0) {
+        return previousVal;
+    }
+
+    if (n == 1) {
+        return currentVal;
+    }
+    return fib(n - 1, currentVal + previousVal, currentVal);
+}
+```
+Donde básicamente se calcula la suma de todos los componentes de la sucesión hasta alcanzar el término buscado.
+Aun así queda la duda de si podría existir una implementación más eficiente. De hecho se puede reducir a un problema
+que se resuelve en tiempo logarítmico, es decir, existe un algoritmo con complejidad $O(\log(n))$.
+
+## Reducción a $O(log(n))$ usando la fórmula de Binet
+
+En el caso de la secuencia de Fibonacci se le atribuye a [Jacques Philippe Marie Binet](https://en.wikipedia.org/w/index.php?title=Jacques_philippe_Marie_Binet&oldid=1067689697)
+la siguiente fórmula explícita para obtener $F_n$
+
+$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \left( \frac{1+\sqrt{5}}{2} \right)^n - \left( \frac{1-\sqrt{5}}{2} \right)^n \right] }$$
+
+Otra forma de escribir esta fórmula es la siguiente
+
+$$ \boxed{ F_n = \frac{1}{\sqrt{5}} \left[ \varphi^n - \psi^n \right] } $$
+
+donde $\varphi=\frac{1+\sqrt{5}}{2}$ y $\psi=\frac{1-\sqrt{5}}{2}$
+
+A $\varphi$ se le suele denominar la [proporción áurea](https://en.wikipedia.org/wiki/Golden_ratio).
+
+Escribí anteriormente un [artículo con la demostración de la fórmula de Binet mediante inducción fuerte
+y también derivando la fórmula usando resultados del álgebra lineal](binet-formula).
+Es importante revisar este artículo para comprender mejor las siguientes optimizaciones.
+
+Una implementación de la fórmula de Binet en C, podría ser la siguiente
+
+```cpp
+const long double FIVE_SQUARE = pow(5, 0.5);
+const long double PHI = (1 + FIVE_SQUARE) / 2;
+const long double PSI = (1 - FIVE_SQUARE) / 2;
+
+unsigned long fib(unsigned long n) {
+    return ((pow(PHI, n) - pow(PSI, n)) / FIVE_SQUARE);
+}
+```
+La cual nos reduce la complejidad algorítmica aún más a $O(\log(n))$, ya que la manera más eficiente conocida de elevar
+a la potencia $n$ tiene complejidad $O(\log(n))$ usando la [exponenciación por cuadrados](https://en.wikipedia.org/wiki/Exponentiation_by_squaring).
+Esta idea es muy importante para los siguientes algoritmos.
+
+El único problema de esta implementación es que en algún punto aparecen errores de redondeo conforme aumenta $n$.
+En esta implementación en C, a partir de $n > 71$, aparecen errores en el resultado.
+Sin embargo, resulta bastante interesante como usando una fórmula explicita es posible reducir la complejidad a tiempo
+logarítmico.
+
+# Optimización a $O(log(n))$ sin pérdida de precisión por errores de redondeo
