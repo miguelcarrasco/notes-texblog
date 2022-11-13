@@ -12,11 +12,6 @@ and the image will be rendered!
 */
 
 function renderImage(file, className, altText) {
-	// svg support
-	if (!file.node.childImageSharp && file.node.extension === 'svg') {
-		return <img src={file.node.publicURL} alt={altText} />
-	}
-
 	return (
 		<Img
 			className={className}
@@ -32,7 +27,7 @@ const Image = function (props) {
 			query={graphql`
 				query {
 					images: allFile(
-						filter: { extension: { regex: "/jpeg|jpg|png|gif|svg/" } }
+						filter: { extension: { regex: "/jpeg|jpg|png|gif/" } }
 					) {
 						edges {
 							node {

@@ -4,7 +4,7 @@ date: "2022-11-09T03:14:24Z"
 description: "Se muestra una implementación eficiente para calcular los términos de la secuencia de fibonacci en tiempo logarítmico O(log(n))"
 ---
 
-import Image from "../../src/components/Utils/image"
+import Fib from '../../src/images/fibonacci.svg';
 
 Un problema muy recurrente en el estudio de algoritmos es la recursividad, para la cual se suele presentar de ejemplo clásico la
 famosa sucesión de Fibonacci, que está definida como la sucesión de enteros donde cada término está compuesto por la suma de
@@ -41,9 +41,9 @@ int fib(int n){
 El gran inconveniente con esta implementación es que su complejidad algorítmica resulta ser exponencial.
 Podemos observar que por cada llamada a esta función, la mayoría de las veces se "expanden" otras
 dos llamadas. Por lo que su complejidad se acerca a $O(2^n)$. Por ejemplo para calcular fib(6), se tienen
-que hacer 23 llamadas a la misma función, muchas de las cuales repiten innecesariamente el mismo cálculo
+que hacer 25 llamadas a la misma función, muchas de las cuales repiten innecesariamente el mismo cálculo.
 
-<Image fileName="fibonacci.svg" className="small-image" alt="árbol de llamadas de la implementación recursiva de fibonacci" />
+<Fib style="width:100%"/>
 
 En este artículo presento ideas interesantes para reducir la complejidad computacional de este problema con diferentes
 algoritmos.
@@ -109,4 +109,71 @@ En esta implementación en C, a partir de $n > 71$, aparecen errores en el resul
 Sin embargo, resulta bastante interesante como usando una fórmula explicita es posible reducir la complejidad a tiempo
 logarítmico.
 
-# Optimización a $O(log(n))$ sin pérdida de precisión por errores de redondeo
+## Optimización a $O(log(n))$ sin pérdida de precisión por errores de redondeo
+En el algoritmo anterior que usa la fórmula de Binet, notamos que su complejidad es logarítmica, únicamente
+porque para elevar un número a la potencia $n$, el algoritmo más eficiente es la [exponenciación por cuadrados](https://en.wikipedia.org/wiki/Exponentiation_by_squaring).
+De no ser por esta razón las demás operaciones se hacen idealmente, en tiempo constante $O(1)$.
+
+Para entender el siguiente algoritmo que conserva la complejidad logarítmica sin perder precisión, tenemos que
+entender bien la exponenciación por cuadrados.
+
+### Exponenciación por cuadrados
+
+La exponenciación es una operación muy importante en la teoría algorítmica de números.
+Por ejemplo, se usa intensamente en muchas pruebas de primalidad y algoritmos de factorización.
+Por lo tanto, se han estudiado métodos eficientes durante siglos.
+
+En los criptosistemas basados en el problema del logaritmo discreto, la exponenciación suele ser la parte que
+consume más tiempo y, es por esta razón, que determina la eficiencia de los protocolos criptográficos
+como el intercambio de llaves de Diffie-Hellman, el algoritmo ElGamal para la cripotgrafía de llave pública
+y algoritmos para firma digital.
+
+la exponenciación por cuadrados consiste en que podemos simplificar el cálculo de potencias muy grandes,
+debido a la observación de que dado un entero positivo $n$, sabemos que
+
+$$
+x^n =
+\begin{cases}
+x(x^2)^{\frac{n-1}{2}} &\text{si } n \text{ es impar}\\
+(x^2)^{\frac{n}{2}} &\text{si } n \text{ es par}
+\end{cases}
+$$
+
+Por ejemplo si queremos calcular $2^10$, en lugar de hacer $10$ multiplicaciones
+
+$$
+2^{10}=2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot=1024
+$$
+
+Podemos hacer menos operaciones. Aplicando primeramente la regla anterior, dado que $10$ es par
+
+$$
+2^{10} = (2\cdot2)^{\frac{10}{2}}=(4)^{5}
+$$
+
+Al multiplicar $2\cdot2$ y hacer la división $\frac{10}{2}=5$ llevamos dos operaciones.
+Luego volvemos a aplicar la regla anterior, pero notando que $5$ es impar
+
+$$
+4^5 = 4(4\cdot4)^2 = 4(16)^2 = 4(256) = 1024
+$$
+
+En este último paso hicimos primero $4\cdot4=16$, luego $16\cdot16=256$ y finalmente $4(256)=1024$, es decir,
+3 operaciones más. Con lo cual reducimos el número de operaciones a 5 en lugar de 10.
+
+Una implementación en C recursiva de la exponenciación por cuadrados es la siguiente
+
+```cpp
+int exponentiation(int a, int b){
+    if(b==1)
+        return a;
+    if(b%2==1)
+        return a*exponentiation(a, b-1);
+    int tmp_exp = exponentiation(a, b/2)
+    return tmp_exp * tmp_exp;
+}
+```
+Es claro que el número de llamadas a esta función será de $\lceil\log_{2}n\rceil$. Lo interesante de la exponenciación
+por cuadrados es que no solo sirve para multiplicar números, sino que este resultado es válido para semigrupos.
+
+**Definición** Un semigrupo
