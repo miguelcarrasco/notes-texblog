@@ -1,6 +1,6 @@
 ---
-title: Algoritmo para el cálculo de los términos de la secuencia de Fibonacci en tiempo O(log(n))
-date: "2022-11-09T03:14:24Z"
+title: Algoritmo para el cálculo de los términos de la secuencia de Fibonacci con complejidad O(log(n))
+date: "2022-11-14T03:14:24Z"
 description: "Se muestra una implementación eficiente para calcular los términos de la secuencia de fibonacci en tiempo logarítmico O(log(n))"
 ---
 
@@ -139,7 +139,7 @@ x(x^2)^{\frac{n-1}{2}} &\text{si } n \text{ es impar}\\
 \end{cases}
 $$
 
-Por ejemplo si queremos calcular $2^10$, en lugar de hacer $10$ multiplicaciones
+Por ejemplo si queremos calcular $2^{10}$, en lugar de hacer $10$ multiplicaciones
 
 $$
 2^{10}=2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot2\cdot=1024
@@ -174,6 +174,49 @@ int exponentiation(int a, int b){
 }
 ```
 Es claro que el número de llamadas a esta función será de $\lceil\log_{2}n\rceil$. Lo interesante de la exponenciación
-por cuadrados es que no solo sirve para multiplicar números, sino que este resultado es válido para semigrupos.
+por cuadrados es que no solo sirve para multiplicar números, sino que este resultado es válido para [semigrupos](https://en.wikipedia.org/wiki/Semigroup).
 
-**Definición** Un semigrupo
+**Definición** Un semigrupo es un conjunto $S$, junto con una operación binaria $\cdot$, que es una función
+$\cdot:S\rightarrow S \times S$, que es asociativa. Es decir, para todo $a,b,c \in S$ se cumple que $a\cdot(b \cdot c) = (a \cdot b) \cdot c$
+
+Es claro que el conjunto de matrices cuadradas de $n \times n$, junto con la multiplicación matricial, forman un semigrupo.
+La multiplicación de matrices es cerrada y asociativa.
+
+> Un semigrupo puede ser visto como un [magma](https://en.wikipedia.org/wiki/Magma_(algebra)) que además es asociativo.
+> Un [grupo](https://en.wikipedia.org/wiki/Group_(mathematics)) es una subclase de semigrupo. En particular el
+> [grupo general lineal](https://en.wikipedia.org/wiki/General_linear_group) $GL(n,\mathbb{F})$ de grado $n$ sobre el
+> cuerpo (o campo) $\mathbb{F}$, si se usa el cuerpo de los reales o complejos, puede ser visto como el grupo formado
+> por matrices cuadradas invertibles de $n \times n$ con la multiplicación de matrices. Este grupo en particular
+> forma un [Grupo de Lie](https://en.wikipedia.org/wiki/Lie_group), ya que forma también una variedad diferencial.
+> Los grupos de Lie son ampliamente utilizados en la matemática moderna y en la física. En la física se usan en el [modelo de partículas estandard](https://en.wikipedia.org/wiki/Standard_Model),
+> ya que es un tipo de [teoría de campo de gauge](https://en.wikipedia.org/wiki/Gauge_theory), donde los grupos de Lie son fundamentales.
+> Los semigrupos también son ampliamente utilizados en la teoría algebráica de autómatas finitos y en la criptografía elíptica.
+
+Podemos entonces usar la forma matricial de la relación de recurrencia de la secuencia de fibonacci que se usó para
+[derivar la fórmula de binet en el artículo anterior](binet-formula)
+
+$$
+\begin{bmatrix}
+F_{n+1} \\
+F_{n}
+\end{bmatrix}
+=
+\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}^n
+\begin{bmatrix}
+F_1 \\
+F_0
+\end{bmatrix}
+$$
+
+Y utilizar la exponenciación por cuadrados para elevar a la potencia $n$ la matriz
+$\begin{bmatrix}
+1 & 1\\
+1 & 0
+\end{bmatrix}$. Que sobre el semigrupo formado por las matrices de $2 \times 2$ es también válido.
+
+Por lo que podemos escribir la siguiente implementación que utiliza la exponenciación por cuadrados de esta matriz
+para calcular $F_n$ en tiempo logarítmico, es decir con complejidad computacional $O(\log(n))$.
+
