@@ -220,3 +220,91 @@ $\begin{bmatrix}
 Por lo que podemos escribir la siguiente implementación que utiliza la exponenciación por cuadrados de esta matriz
 para calcular $F_n$ en tiempo logarítmico, es decir con complejidad computacional $O(\log(n))$.
 
+```cpp
+/**
+ * Multiplica la matriz a por la matrix b y deposita el resultado
+ * en la matriz r
+ *
+ * @param a matriz de 2x2 como un arreglo bidimensional
+ * @param b matriz de 2x2 como un arreglo bidimensional
+ * @param r matriz resultado de 2x2 como arreglo bidimensional
+ */
+void matrixMultiply(unsigned long a[2][2], unsigned long b[2][2],
+    unsigned long r[2][2]) {
+
+    unsigned long r00 = a[0][0] * b[0][0] + a[0][1] * b[1][0];
+    unsigned long r01 = a[0][0] * b[0][1] + a[0][1] * b[1][1];
+    unsigned long r10 = a[1][0] * b[0][0] + a[1][1] * b[1][0];
+    unsigned long r11 = a[1][0] * b[0][1] + a[1][1] * b[1][1];
+
+    r[0][0] = r00;
+    r[0][1] = r01;
+    r[1][0] = r10;
+    r[1][1] = r11;
+}
+
+
+/**
+ * Eleva la matriz "a" a la potencia n y deposita el resultado en "r"
+ * usando exponenciación por cuadrados
+ *
+ * @param a matriz de 2x2 como un arreglo bidimensional
+ * @param n un entero que representa la potencia a la que se elevará a
+ * @param r matriz resultado de 2x2 como arreglo bidimensional
+ * @return
+ */
+void power(unsigned long a[2][2], int n, unsigned long r[2][2]) {
+    // deposita la matriz identidad en r
+    if (n == 0) {
+        r[0][0] = 1;
+        r[0][1] = 0;
+        r[1][0] = 0;
+        r[1][1] = 1;
+        return;
+    }
+
+    // copia a en r
+    if (n == 1) {
+        for (int j = 0; j < 2; j++) {
+            for (int i = 0; i < 2; i++) {
+                r[j][i] = a[j][i];
+            }
+        }
+        return;
+    }
+
+    unsigned long a2[2][2];
+    matrixMultiply(a, a, a2);
+
+    if (n % 2 == 0) {
+        power(a2, n / 2, r);
+    } else {
+        power(a2, (n - 1) / 2, r);
+        matrixMultiply(a, r, r);
+    }
+}
+
+unsigned long fib(unsigned long n) {
+    unsigned long a[2][2] = {{1, 1},
+                             {1, 0}};
+    unsigned long r[2][2];
+
+    power(a, n, r);
+
+    return r[1][0];
+}
+```
+
+Lo interesante de esta implementación es que no sacrifica precisión y no genera errores de redondeo como en la
+implementación de la fórmula de Binet, con la misma complejidad algorítmica $O(\log(n))$.
+
+## Referencias
+
+- [Wikipedia: Fibonacci Number](https://en.wikipedia.org/wiki/Fibonacci_number)
+- [Wikipedia: Exponentiation by squaring](https://en.wikipedia.org/wiki/Exponentiation_by_squaring)
+- Fibonacci and Lucas Numbers with Applications, Volume 1, 2nd Edition - Thomas Koshy
+- Handbook of Elliptic and Hyperelliptic Curve Cryptography - Kenneth H. Rosen, Ph.D.
+- [Why is the complexity of computing the Fibonacci series 2^n and not n^2?](https://stackoverflow.com/questions/7547133/why-is-the-complexity-of-computing-the-fibonacci-series-2n-and-not-n2)
+- [The Fibonacci Sequence - Thomas Browning](https://math.berkeley.edu/~tb65536/Fibonacci_Exposition.pdf)
+- [Program for nth fibonacci - Geek for geeks](https://www.geeksforgeeks.org/program-for-nth-fibonacci-number/)
+- [Fibonacci Numbers Algorithm - The GNU Multiple Precision Arithmetic Library](https://gmplib.org/manual/Fibonacci-Numbers-Algorithm)
