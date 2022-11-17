@@ -63,5 +63,4 @@ module.exports = {
         `gatsby-plugin-sharp`,
         `gatsby-plugin-sass`,
     ],
-    pathPrefix: "/notes-texblog"
 }
